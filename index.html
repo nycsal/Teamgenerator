@@ -1,1 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KakaReza Team Generator</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f0f4f8;
+  }
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  .controls {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  label {
+    margin-right: 10px;
+  }
+  select, button {
+    padding: 8px 12px;
+    font-size: 16px;
+    margin: 0 8px 8px 0;
+    cursor: pointer;
+  }
+  #excludeList {
+    max-width: 400px;
+    margin: 0 auto 20px auto;
+    padding: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  #excludeList label {
+    display: block;
+    margin: 4px 0;
+  }
+  #teams {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  .team-box {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    min-width: 180px;
+    max-width: 200px;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 0.1);
+  }
+  .team-title {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .player {
+    background-color: #eee;
+    border-radius: 12px;
+    padding: 6px 10px;
+    margin: 6px 4px;
+    display: inline-block;
+    font-size: 14px;
+  }
+  /* Colorful backgrounds for teams */
+  .team-box:nth-child(odd) {
+    background: #cfe8fc;
+  }
+  .team-box:nth-child(even) {
+    background: #fddede;
+  }
+  #leftover {
+    max-width: 600px;
+    margin: 20px auto;
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    padding: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<h1>KakaReza Team Generator</h1>
+
+<div class="controls">
+  <label for="playersPerTeam">Select players per team:</label>
+  <select id="playersPerTeam">
+    <option value="4">4</option>
+    <option value="5" selected>5</option>
+    <option value="6">6</option>
+  </select>
+</div>
+
+<div id="excludeList">
+  <strong>Exclude players who won't play today:</strong><br />
+  <!-- checkboxes inserted by JS -->
+</div>
+
+<div style="text-align:center;">
+  <button id="generateBtn">Generate Teams</button>
+</div>
+
+<div id="teams"></div>
+
+<div id="leftover" style="display:none;"></div>
+
+<script>
+  const allPlayers = [
+    "sol", "sohail", "gasdoc", "Weiss", "Wally", "wahdat", "sameh", "Raza", "muj", "Moe I",
+    "Moe A", "moe Y", "Mehdi", "massod", "jawad s", "jaafar", "jaawade", "ish", "Fawad",
+    "farhad", "fareed", "Elias", "dr Qari", "Daanish", "arya", "Ali pharmacy", "Ahmad",
+    "Abul", "akbaree", "murtaza", "KakaReza"
+  ];
+
+  const excludeListDiv = document.getElementById("excludeList");
+  const playersPerTeamSelect = document.getElementById("playersPerTeam");
+  const generateBtn = document.getElementById("generateBtn");
+  const teamsDiv = document.getElementById("teams");
+  const leftoverDiv = document.getElementById("leftover");
+
+  // Create exclude checkboxes
+  function createExcludeCheckboxes() {
+    excludeListDiv.innerHTML = "<strong>Exclude players who won't play today:</strong><br />";
+    allPlayers.forEach((player, i) => {
+      const id = `exclude-${i}`;
+      const label = document.createElement("label");
+      label.htmlFor = id;
+      label.style.cursor = "pointer";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.id = id;
+      checkbox.value = player;
+
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(" " + player));
+      excludeListDiv.appendChild(label);
+    });
+  }
+
+  // Shuffle helper array function
+  function shuffleArray(array) {
+    let arr = array.slice();
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // Generate teams
+  function generateTeams() {
+    // Clear previous results
+    teamsDiv.innerHTML = "";
+    leftoverDiv.style.display = "none";
+    leftoverDiv.textContent = "";
+
+    const playersPerTeam = parseInt(playersPerTeamSelect.value, 10);
+
+    // Get excluded players
+    let excludedPlayers = [];
+    excludeListDiv.querySelectorAll("input[type=checkbox]").forEach(chk => {
+      if (chk.checked) excludedPlayers.push(chk.value);
+    });
+
+    // Filter players
+    let availablePlayers = allPlayers.filter(p => !excludedPlayers.includes(p));
+
+    if (availablePlayers.length === 0) {
+      alert("No players available to generate teams!");
+      return;
+    }
+
+    // Shuffle the available players
+    availablePlayers = shuffleArray(availablePlayers);
+
+    // Calculate number of teams and leftover players
+    const numTeams = Math.floor(availablePlayers.length / playersPerTeam);
+    const leftovers = availablePlayers.length % playersPerTeam;
+
+    if (numTeams === 0) {
+      alert(`Not enough players to form any team with ${playersPerTeam} players per team.`);
+      return;
+    }
+
+    // Create teams
+    let teams = [];
+    for (let i = 0; i < numTeams; i++) {
+      teams.push(availablePlayers.slice(i * playersPerTeam, (i + 1) * playersPerTeam));
+    }
+
+    // Show teams
+    teams.forEach((team, idx) => {
+      const teamBox = document.createElement("div");
+      teamBox.className = "team-box";
+      const teamName = String.fromCharCode("A".charCodeAt(0) + idx);
+      teamBox.innerHTML = `<div class="team-title">Team ${teamName}</div>`;
+      team.forEach(player => {
+        const p = document.createElement("div");
+        p.className = "player";
+        p.textContent = player;
+        teamBox.appendChild(p);
+      });
+      teamsDiv.appendChild(teamBox);
+    });
+
+    // Show leftover players if any
+    if (leftovers > 0) {
+      const leftoverPlayers = availablePlayers.slice(numTeams * playersPerTeam);
+      leftoverDiv.style.display = "block";
+      leftoverDiv.innerHTML = `<div><strong>Leftover Players (can be redressed):</strong> ${leftoverPlayers.join(", ")}</div>`;
+    } else {
+      leftoverDiv.style.display = "none";
+    }
+  }
+
+  // Setup
+  createExcludeCheckboxes();
+  generateBtn.addEventListener("click", generateTeams);
+</script>
+</body>
+</html>
 
