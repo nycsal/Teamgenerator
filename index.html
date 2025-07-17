@@ -13,39 +13,68 @@
     );
     min-height: 100vh;
     margin: 0;
+    padding: 15px;
     font-family: 'Segoe UI', 'Arial', sans-serif;
   }
   h1 {
     text-align: center;
     letter-spacing: 1px;
     font-weight: bold;
-    margin: 30px 0 10px 0;
+    margin: 20px 0 25px 0;
     color: #264478;
   }
-  .controls {
-    text-align: center;
-    margin-bottom: 16px;
+  .section {
+    max-width: 600px;
+    margin: 0 auto 25px auto;
+    background: white;
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
   }
-  select, button {
+  .step-number {
+    display: inline-block;
+    background: #3584e4;
+    color: white;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 18px;
+  }
+  .step-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #264478;
+    display: flex;
+    align-items: center;
+  }
+  select {
     margin: 0 8px;
-    padding: 9px 18px;
+    padding: 12px 24px;
     border-radius: 24px;
-    border: none;
-    font-size: 16px;
+    border: 2px solid #c6e4ff;
+    font-size: 18px;
     background: #fff;
     color: #174290;
-    transition: box-shadow 0.2s;
+    transition: all 0.2s;
     box-shadow: 0 2px 6px #bbd2fd66;
+    display: block;
+    margin: 10px auto;
+    text-align: center;
+    width: 200px;
   }
-  select:focus, button:focus { outline: 2px solid #6aaafc; }
+  select:focus { outline: 2px solid #6aaafc; }
   #playersGrid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
-    padding: 20px 0 2px 0;
-    margin: 0 auto 17px auto;
-    max-width: 480px;
+    padding: 10px 0;
+    margin: 0 auto;
   }
   .player-btn {
     background: linear-gradient(90deg, #eef5ff, #c6e4ff 60%, #e9fbf4);
@@ -83,12 +112,15 @@
     color: #fff;
     font-weight: bold;
     letter-spacing: 1px;
-    margin: 18px auto 28px auto;
+    margin: 10px auto;
     display: block;
     border: none;
     box-shadow: 0 2px 8px #93bbff77;
     font-size: 18px;
     transition: background 0.18s;
+    padding: 14px 30px;
+    border-radius: 24px;
+    cursor: pointer;
   }
   #generateBtn:active { background: #2154a0; }
   #teams {
@@ -185,27 +217,42 @@
     }
     #playersGrid { max-width: 99vw; }
     #leftover { max-width: 98vw; }
+    .section { max-width: 95%; }
   }
 </style>
 </head>
 <body>
 <h1>KakaReza Team Generator</h1>
 
-<div class="controls">
-  <label for="playersPerTeam" style="font-size:18px;">Players per team:</label>
+<div class="section">
+  <div class="step-title">
+    <span class="step-number">1</span>
+    Select number of players per team
+  </div>
   <select id="playersPerTeam">
-    <option value="4">4</option>
-    <option value="5" selected>5</option>
-    <option value="6">6</option>
+    <option value="4">4 Players</option>
+    <option value="5" selected>5 Players</option>
+    <option value="6">6 Players</option>
   </select>
 </div>
 
-<div id="playersGrid"></div>
+<div class="section">
+  <div class="step-title">
+    <span class="step-number">2</span>
+    Tap on players who are not playing
+  </div>
+  <div id="playersGrid"></div>
+</div>
 
-<button id="generateBtn">GENERATE TEAMS</button>
-
-<div id="teams"></div>
-<div id="leftover"></div>
+<div class="section">
+  <div class="step-title">
+    <span class="step-number">3</span>
+    Generate teams
+  </div>
+  <button id="generateBtn">GENERATE TEAMS</button>
+  <div id="teams"></div>
+  <div id="leftover"></div>
+</div>
 
 <script>
 const allPlayers = [
@@ -316,11 +363,6 @@ function generateTeams() {
 
 // Initial render/setup
 renderPlayers();
-
-playersPerTeamSelect.addEventListener("change", () => {
-  // Optional: Regenerate teams if auto
-});
-
 generateBtn.addEventListener("click", generateTeams);
 </script>
 </body>
