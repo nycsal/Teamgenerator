@@ -6,83 +6,185 @@
 <title>KakaReza Team Generator</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background: #f0f4f8;
+    background: repeating-linear-gradient(
+      135deg,
+      #e3ecfa 0px, #e3ecfa 30px,
+      #f0f7ff 30px, #f0f7ff 60px
+    );
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
   }
   h1 {
     text-align: center;
-    color: #333;
+    letter-spacing: 1px;
+    font-weight: bold;
+    margin: 30px 0 10px 0;
+    color: #264478;
   }
   .controls {
-    margin-bottom: 20px;
     text-align: center;
-  }
-  label {
-    margin-right: 10px;
+    margin-bottom: 16px;
   }
   select, button {
-    padding: 8px 12px;
+    margin: 0 8px;
+    padding: 9px 18px;
+    border-radius: 24px;
+    border: none;
     font-size: 16px;
-    margin: 0 8px 8px 0;
+    background: #fff;
+    color: #174290;
+    transition: box-shadow 0.2s;
+    box-shadow: 0 2px 6px #bbd2fd66;
+  }
+  select:focus, button:focus { outline: 2px solid #6aaafc; }
+  #playersGrid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 0 2px 0;
+    margin: 0 auto 17px auto;
+    max-width: 480px;
+  }
+  .player-btn {
+    background: linear-gradient(90deg, #eef5ff, #c6e4ff 60%, #e9fbf4);
+    color: #285567;
+    border: none;
+    border-radius: 26px;
     cursor: pointer;
+    padding: 11px 19px;
+    margin: 2px 0;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 2px 7px #c4deffcc;
+    min-width: 80px;
+    transition: background 0.15s, color 0.15s, opacity 0.18s;
+    user-select: none;
+    position: relative;
   }
-  #excludeList {
-    max-width: 400px;
-    margin: 0 auto 20px auto;
-    padding: 10px;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  .player-btn.excluded {
+    background: linear-gradient(90deg, #eee 70%, #aaa 100%);
+    color: #8b939f;
+    text-decoration: line-through;
+    opacity: 0.50;
   }
-  #excludeList label {
+  .player-btn .ex-ind {
+    position: absolute;
+    right: 11px;
+    top: 0;
+    font-size: 20px;
+    color: #c23e3e;
+    font-weight: bold;
+    pointer-events: none;
+  }
+  #generateBtn {
+    background: #3584e4;
+    color: #fff;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 18px auto 28px auto;
     display: block;
-    margin: 4px 0;
+    border: none;
+    box-shadow: 0 2px 8px #93bbff77;
+    font-size: 18px;
+    transition: background 0.18s;
   }
+  #generateBtn:active { background: #2154a0; }
   #teams {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
+    gap: 28px;
+    margin-top: 18px;
+    margin-bottom: 9px;
   }
   .team-box {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    min-width: 180px;
-    max-width: 200px;
-    box-shadow: 0 3px 6px rgb(0 0 0 / 0.1);
+    min-width: 190px;
+    box-shadow: 0 5px 22px #6cbceb33;
+    border-radius: 16px;
+    margin-bottom: 0;
+    background: #f5fafd;
+    overflow: hidden;
+    transform: translateY(60px) scale(0.82);
+    opacity: 0.4;
+    animation: teamPopIn 0.5s forwards;
   }
-  .team-title {
-    font-weight: bold;
-    font-size: 20px;
-    margin-bottom: 10px;
+  /* Team color bands (repeat if more than 6 teams) */
+  .team-band { height: 15px; width: 100%; }
+  .team-0 .team-band { background: linear-gradient(90deg, #6ad7e5, #4976f0); }
+  .team-1 .team-band { background: linear-gradient(90deg, #ffd966, #faad34); }
+  .team-2 .team-band { background: linear-gradient(90deg, #b6e388, #4ea86e); }
+  .team-3 .team-band { background: linear-gradient(90deg, #ff99ba, #c674a3); }
+  .team-4 .team-band { background: linear-gradient(90deg, #f9a1bc, #f97b63); }
+  .team-5 .team-band { background: linear-gradient(90deg, #84c0e7, #6a82db); }
+  .team-box .team-title {
+    padding: 11px 0 6px 0;
     text-align: center;
+    font-weight: bold;
+    font-size: 1.22em;
+    color: #2c466a;
+    letter-spacing: 1.8px;
   }
-  .player {
-    background-color: #eee;
-    border-radius: 12px;
-    padding: 6px 10px;
-    margin: 6px 4px;
-    display: inline-block;
-    font-size: 14px;
+  .team-box .players {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    margin-bottom: 9px;
+    margin-top: 2px;
   }
-  /* Colorful backgrounds for teams */
-  .team-box:nth-child(odd) {
-    background: #cfe8fc;
+  .team-box .player-pill {
+    background: #e2ecfa;
+    color: #235378;
+    border-radius: 18px;
+    padding: 7px 13px;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 400;
+    box-shadow: 0 1px 3px #b6cff366;
   }
-  .team-box:nth-child(even) {
-    background: #fddede;
+  @keyframes teamPopIn {
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
   #leftover {
-    max-width: 600px;
-    margin: 20px auto;
-    background: #fff3cd;
-    border: 1px solid #ffeeba;
-    padding: 15px;
-    border-radius: 5px;
+    max-width: 620px;
+    margin: 24px auto 0 auto;
+    background: linear-gradient(90deg, #fff6d1 70%, #fceca4 100%);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px #ffe8a277;
+    padding: 13px 9px 8px 9px;
     font-weight: bold;
+    color: #a26402;
+    display: none;
     text-align: center;
+    position: relative;
+  }
+  #leftover .referee-cap {
+    font-size: 26px;
+    margin-bottom: 3px;
+    display: block;
+  }
+  #leftover .ref-name {
+    display: inline-block;
+    background: #fff6ea;
+    color: #d48a16;
+    border-radius: 13px;
+    margin: 0 6px 4px 0;
+    box-shadow: 0 1px 5px #ffe2b2a9;
+    padding: 6px 11px 6px 13px;
+    font-size: 16.5px;
+    font-weight: 400;
+  }
+  @media (max-width: 600px) {
+    .team-box {
+      min-width: 90vw;
+    }
+    #playersGrid { max-width: 99vw; }
+    #leftover { max-width: 98vw; }
   }
 </style>
 </head>
@@ -90,7 +192,7 @@
 <h1>KakaReza Team Generator</h1>
 
 <div class="controls">
-  <label for="playersPerTeam">Select players per team:</label>
+  <label for="playersPerTeam" style="font-size:18px;">Players per team:</label>
   <select id="playersPerTeam">
     <option value="4">4</option>
     <option value="5" selected>5</option>
@@ -98,133 +200,128 @@
   </select>
 </div>
 
-<div id="excludeList">
-  <strong>Exclude players who won't play today:</strong><br />
-  <!-- checkboxes inserted by JS -->
-</div>
+<div id="playersGrid"></div>
 
-<div style="text-align:center;">
-  <button id="generateBtn">Generate Teams</button>
-</div>
+<button id="generateBtn">GENERATE TEAMS</button>
 
 <div id="teams"></div>
-
-<div id="leftover" style="display:none;"></div>
+<div id="leftover"></div>
 
 <script>
-  const allPlayers = [
-    "sol", "sohail", "gasdoc", "Weiss", "Wally", "wahdat", "sameh", "Raza", "muj", "Moe I",
-    "Moe A", "moe Y", "Mehdi", "massod", "jawad s", "jaafar", "jaawade", "ish", "Fawad",
-    "farhad", "fareed", "Elias", "dr Qari", "Daanish", "arya", "Ali pharmacy", "Ahmad",
-    "Abul", "akbaree", "murtaza", "KakaReza"
-  ];
+const allPlayers = [
+  "sol", "sohail", "gasdoc", "Weiss", "Wally", "wahdat", "sameh", "Raza", "muj", "Moe I",
+  "Moe A", "moe Y", "Mehdi", "massod", "jawad s", "jaafar", "jaawade", "ish", "Fawad",
+  "farhad", "fareed", "Elias", "dr Qari", "Daanish", "arya", "Ali pharmacy", "Ahmad",
+  "Abul", "akbaree", "murtaza", "KakaReza"
+];
 
-  const excludeListDiv = document.getElementById("excludeList");
-  const playersPerTeamSelect = document.getElementById("playersPerTeam");
-  const generateBtn = document.getElementById("generateBtn");
-  const teamsDiv = document.getElementById("teams");
-  const leftoverDiv = document.getElementById("leftover");
+let excludedPlayers = new Set();
 
-  // Create exclude checkboxes
-  function createExcludeCheckboxes() {
-    excludeListDiv.innerHTML = "<strong>Exclude players who won't play today:</strong><br />";
-    allPlayers.forEach((player, i) => {
-      const id = `exclude-${i}`;
-      const label = document.createElement("label");
-      label.htmlFor = id;
-      label.style.cursor = "pointer";
+const playersGrid = document.getElementById('playersGrid');
+const playersPerTeamSelect = document.getElementById("playersPerTeam");
+const generateBtn = document.getElementById("generateBtn");
+const teamsDiv = document.getElementById("teams");
+const leftoverDiv = document.getElementById("leftover");
 
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.id = id;
-      checkbox.value = player;
+function renderPlayers() {
+  playersGrid.innerHTML = '';
+  allPlayers.forEach((player, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'player-btn';
+    btn.setAttribute('data-player', player);
+    btn.textContent = player;
+    if (excludedPlayers.has(player)) {
+      btn.classList.add('excluded');
+      btn.innerHTML = player + ' <span class="ex-ind">&times;</span>';
+    }
+    btn.onclick = function () {
+      if (excludedPlayers.has(player)) {
+        excludedPlayers.delete(player);
+      } else {
+        excludedPlayers.add(player);
+      }
+      renderPlayers();
+    }
+    playersGrid.appendChild(btn);
+  });
+}
 
-      label.appendChild(checkbox);
-      label.appendChild(document.createTextNode(" " + player));
-      excludeListDiv.appendChild(label);
-    });
+function shuffleArray(array) {
+  let arr = array.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function generateTeams() {
+  teamsDiv.innerHTML = '';
+  leftoverDiv.style.display = "none";
+  leftoverDiv.innerHTML = "";
+
+  const playersPerTeam = parseInt(playersPerTeamSelect.value, 10);
+  let availablePlayers = allPlayers.filter(p => !excludedPlayers.has(p));
+
+  if (availablePlayers.length === 0) {
+    alert("No players available to generate teams!");
+    return;
   }
 
-  // Shuffle helper array function
-  function shuffleArray(array) {
-    let arr = array.slice();
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
+  availablePlayers = shuffleArray(availablePlayers);
+  const numTeams = Math.floor(availablePlayers.length / playersPerTeam);
+  const leftovers = availablePlayers.length % playersPerTeam;
+
+  if (numTeams === 0) {
+    alert(`Not enough players to form any team with ${playersPerTeam} players per team.`);
+    return;
   }
 
-  // Generate teams
-  function generateTeams() {
-    // Clear previous results
-    teamsDiv.innerHTML = "";
-    leftoverDiv.style.display = "none";
-    leftoverDiv.textContent = "";
+  // Animation stagger
+  let delay = 0;
 
-    const playersPerTeam = parseInt(playersPerTeamSelect.value, 10);
-
-    // Get excluded players
-    let excludedPlayers = [];
-    excludeListDiv.querySelectorAll("input[type=checkbox]").forEach(chk => {
-      if (chk.checked) excludedPlayers.push(chk.value);
-    });
-
-    // Filter players
-    let availablePlayers = allPlayers.filter(p => !excludedPlayers.includes(p));
-
-    if (availablePlayers.length === 0) {
-      alert("No players available to generate teams!");
-      return;
-    }
-
-    // Shuffle the available players
-    availablePlayers = shuffleArray(availablePlayers);
-
-    // Calculate number of teams and leftover players
-    const numTeams = Math.floor(availablePlayers.length / playersPerTeam);
-    const leftovers = availablePlayers.length % playersPerTeam;
-
-    if (numTeams === 0) {
-      alert(`Not enough players to form any team with ${playersPerTeam} players per team.`);
-      return;
-    }
-
-    // Create teams
-    let teams = [];
-    for (let i = 0; i < numTeams; i++) {
-      teams.push(availablePlayers.slice(i * playersPerTeam, (i + 1) * playersPerTeam));
-    }
-
-    // Show teams
-    teams.forEach((team, idx) => {
-      const teamBox = document.createElement("div");
-      teamBox.className = "team-box";
-      const teamName = String.fromCharCode("A".charCodeAt(0) + idx);
-      teamBox.innerHTML = `<div class="team-title">Team ${teamName}</div>`;
-      team.forEach(player => {
-        const p = document.createElement("div");
-        p.className = "player";
-        p.textContent = player;
-        teamBox.appendChild(p);
-      });
-      teamsDiv.appendChild(teamBox);
-    });
-
-    // Show leftover players if any
-    if (leftovers > 0) {
-      const leftoverPlayers = availablePlayers.slice(numTeams * playersPerTeam);
-      leftoverDiv.style.display = "block";
-      leftoverDiv.innerHTML = `<div><strong>Leftover Players (can be redressed):</strong> ${leftoverPlayers.join(", ")}</div>`;
-    } else {
-      leftoverDiv.style.display = "none";
-    }
+  let teams = [];
+  for (let i = 0; i < numTeams; i++) {
+    teams.push(availablePlayers.slice(i * playersPerTeam, (i + 1) * playersPerTeam));
   }
 
-  // Setup
-  createExcludeCheckboxes();
-  generateBtn.addEventListener("click", generateTeams);
+  teams.forEach((team, idx) => {
+    const box = document.createElement("div");
+    box.className = `team-box team-${idx%6}`;
+    box.style.animationDelay = (0.06 * idx) + "s";
+    box.innerHTML = `
+      <div class="team-band"></div>
+      <div class="team-title">Team ${String.fromCharCode('A'.charCodeAt(0)+idx)}</div>
+      <div class="players"></div>
+    `;
+    const playersDiv = box.querySelector('.players');
+    team.forEach(player => {
+      const pill = document.createElement('span');
+      pill.className = 'player-pill';
+      pill.textContent = player;
+      playersDiv.appendChild(pill);
+    });
+    teamsDiv.appendChild(box);
+  });
+
+  if (leftovers > 0) {
+    const referees = availablePlayers.slice(numTeams * playersPerTeam);
+    leftoverDiv.style.display = "block";
+    leftoverDiv.innerHTML = `
+      <span class="referee-cap">⚫🟡 <span style="font-size:21px;font-weight:600">Referees</span> 🟡⚫</span>
+      ${referees.map(n=>`<span class="ref-name">${n}</span>`).join("")}
+    `;
+  }
+}
+
+// Initial render/setup
+renderPlayers();
+
+playersPerTeamSelect.addEventListener("change", () => {
+  // Optional: Regenerate teams if auto
+});
+
+generateBtn.addEventListener("click", generateTeams);
 </script>
 </body>
 </html>
-
